@@ -1,0 +1,78 @@
+---
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import { getArticles, formatDate, url } from "../../lib/site";
+import { CATEGORIES } from "../../content.config";
+
+export async function getStaticPaths() {
+  const all = await getArticles();
+  return all.map((article) => ({ params: { slug: article.id }, props: { article, all } }));
+}
+const { article, all } = Astro.props;
+const d = article.data;
+const { Content } = await render(article);
+const related = all.filter((a) => a.data.category === d.category && a.id !== article.id).slice(0, 4);
+---
+<Base title={d.title} description={d.summary}>
+  <article class="article">
+    <a class="badge" href={url(`category/${d.category}/`)}>{CATEGORIES[d.category]}</a>
+    <h1>{d.title}</h1>
+    <p class="summary">{d.summary}</p>
+    <p class="meta muted">
+      <time datetime={d.date.toISOString()}>입력 {formatDate(d.date, true)}</time>
+      {d.aiGenerated && <span> · 오늘의돈 AI 데이터팀</span>}
+    </p>
+    {d.sample && <p class="notice">이 기사는 사이트 화면 확인용 <b>샘플</b>입니다. 기사 속 수치는 실제 시장 데이터가 아닙니다.</p>}
+
+    {d.keyFigures.length > 0 && (
+      <div class="figures">
+        {d.keyFigures.map((f) => (
+          <div class="fig">
+            <span class="muted label">{f.label}</span>
+            <b class="value">{f.value}</b>
+            {f.change && <span class:list={["chg", f.direction ?? "flat"]}>{f.change}</span>}
+          </div>
+        ))}
+      </div>
+    )}
+
+    <div class="body"><Content /></div>
+
+    {d.sources.length > 0 && (
+      <p class="sources muted">데이터 출처: {d.sources.map((s, i) => (<>{i > 0 && ", "}{s.url ? <a href={s.url} rel="nofollow noopener" target="_blank">{s.name}</a> : s.name}</>))}</p>
+    )}
+    <p class="notice">
+      {d.aiGenerated && "이 기사는 공개 데이터를 바탕으로 AI가 작성하고, 기사 속 수치를 원본 데이터와 자동 대조해 게시했습니다. "}
+      본 기사는 정보 제공 목적이며 특정 종목·자산의 매수·매도를 권유하지 않습니다.
+    </p>
+  </article>
+
+  {related.length > 0 && (
+    <section class="related">
+      <h2 class="section-title">{CATEGORIES[d.category]} 다른 기사</h2>
+      {related.map((a) => <ArticleCard article={a} variant="compact" />)}
+    </section>
+  )}
+</Base>
+<style>
+  .article, .related { max-width: 720px; margin: 0 auto; }
+  .article { padding-top: 32px; }
+  h1 { font-family: var(--serif); font-weight: 900; font-size: clamp(26px, 5vw, 38px); margin: 8px 0 12px; letter-spacing: -0.01em; }
+  .summary { font-size: 18px; color: var(--muted); margin: 0 0 14px; border-left: 3px solid var(--line); padding-left: 12px; }
+  .meta { font-size: 13px; padding-bottom: 16px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+  .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 0 0 24px; }
+  .fig { background: var(--surface); border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; }
+  .fig .label { font-size: 12px; }
+  .fig .value { font-size: 20px; font-variant-numeric: tabular-nums; }
+  .fig .chg { font-size: 13px; font-weight: 700; }
+  .body { font-size: 17px; line-height: 1.85; }
+  .body :global(h2) { font-size: 20px; margin: 32px 0 10px; }
+  .body :global(p) { margin: 0 0 18px; }
+  .body :global(table) { width: 100%; border-collapse: collapse; font-size: 15px; margin: 0 0 20px; display: block; overflow-x: auto; }
+  .body :global(th), .body :global(td) { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: right; white-space: nowrap; }
+  .body :global(th:first-child), .body :global(td:first-child) { text-align: left; }
+  .body :global(th) { background: var(--surface); }
+  .sources { font-size: 13px; margin: 24px 0 12px; }
+  .sources a { text-decoration: underline; }
+</style>

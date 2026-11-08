@@ -1,0 +1,28 @@
+---
+import fs from "node:fs";
+type Item = { label: string; value: string; change: string; direction: "up" | "down" | "flat" };
+let items: Item[] = [];
+let asOf = "";
+try {
+  const raw = JSON.parse(fs.readFileSync(new URL("../../data/latest.json", import.meta.url), "utf8"));
+  items = raw.ticker ?? [];
+  asOf = raw.asOfLabel ?? "";
+} catch {}
+const arrow = { up: "▲", down: "▼", flat: "-" };
+---
+{items.length > 0 && (
+  <div class="ticker">
+    <div class="container ticker-inner">
+      {items.map((i) => (
+        <span class="item"><b>{i.label}</b> {i.value} <span class={i.direction}>{arrow[i.direction]} {i.change}</span></span>
+      ))}
+      {asOf && <span class="muted asof">{asOf}</span>}
+    </div>
+  </div>
+)}
+<style>
+  .ticker { background: var(--surface); font-size: 13px; }
+  .ticker-inner { display: flex; gap: 22px; overflow-x: auto; padding-top: 8px; padding-bottom: 8px; white-space: nowrap; scrollbar-width: none; }
+  .item b { font-weight: 700; margin-right: 2px; }
+  .asof { margin-left: auto; font-size: 12px; }
+</style>

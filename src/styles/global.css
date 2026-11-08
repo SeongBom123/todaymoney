@@ -1,0 +1,32 @@
+:root {
+  --bg: #ffffff;
+  --surface: #f6f7f5;
+  --text: #16181a;
+  --muted: #5f666d;
+  --line: #e3e6e3;
+  --brand: #0b7a4b;
+  --brand-ink: #075a37;
+  --up: #d6312d;   /* 상승: 빨강 (국내 관례) */
+  --down: #1f62d1; /* 하락: 파랑 */
+  --serif: "Noto Serif KR", serif;
+  --sans: "Noto Sans KR", system-ui, -apple-system, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111314; --surface: #1a1d1f; --text: #eceeed; --muted: #a0a7ad;
+    --line: #2b2f32; --brand: #34c286; --brand-ink: #5fd7a2; --up: #ff6b62; --down: #6aa3ff;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.6; word-break: keep-all; overflow-wrap: anywhere; }
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--brand); }
+.container { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+h1, h2, h3 { line-height: 1.3; margin: 0; }
+.up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--muted); }
+.badge { display: inline-block; font-size: 12px; font-weight: 700; color: var(--brand); letter-spacing: .02em; }
+.muted { color: var(--muted); }
+.section-title { font-size: 15px; font-weight: 900; border-top: 3px solid var(--text); padding-top: 10px; margin: 36px 0 14px; display: flex; justify-content: space-between; align-items: baseline; }
+.section-title a { font-size: 13px; font-weight: 500; color: var(--muted); }
+.notice { background: var(--surface); border-left: 3px solid var(--brand); padding: 12px 14px; font-size: 13px; color: var(--muted); border-radius: 4px; }

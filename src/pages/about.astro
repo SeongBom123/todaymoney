@@ -1,0 +1,23 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../lib/site";
+---
+<Base title="소개" description={`${SITE.name} 소개 및 운영 원칙`}>
+  <article class="about">
+    <h1>{SITE.name}을 소개합니다</h1>
+    <p>{SITE.name}({SITE.nameEn})은 증시·환율·코인 등 매일 쏟아지는 경제 숫자를 빠르고 정확하게 정리하는 데이터 경제 뉴스입니다.</p>
+    <h2>운영 원칙</h2>
+    <ul>
+      <li><b>데이터 우선:</b> 모든 시황 기사는 한국은행, 공공데이터포털, 거래소 공개 API 등 공개 데이터를 근거로 작성합니다.</li>
+      <li><b>AI 작성 표시:</b> AI가 작성한 기사에는 그 사실을 명시합니다.</li>
+      <li><b>숫자 자동 검증:</b> 기사에 쓰인 수치는 게시 전에 원본 데이터와 자동으로 대조하고, 맞지 않으면 게시하지 않습니다.</li>
+      <li><b>투자 권유 금지:</b> 특정 종목이나 자산의 매수·매도를 권하지 않습니다. 모든 기사는 정보 제공 목적입니다.</li>
+    </ul>
+  </article>
+</Base>
+<style>
+  .about { max-width: 720px; margin: 0 auto; padding-top: 32px; font-size: 17px; line-height: 1.8; }
+  h1 { font-family: var(--serif); font-weight: 900; font-size: 32px; margin-bottom: 16px; }
+  h2 { font-size: 20px; margin: 28px 0 8px; }
+  li { margin-bottom: 8px; }
+</style>

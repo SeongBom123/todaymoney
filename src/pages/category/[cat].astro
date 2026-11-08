@@ -1,0 +1,18 @@
+---
+import Base from "../../layouts/Base.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import { getArticles } from "../../lib/site";
+import { CATEGORIES } from "../../content.config";
+
+export function getStaticPaths() {
+  return Object.keys(CATEGORIES).map((cat) => ({ params: { cat } }));
+}
+const cat = Astro.params.cat as keyof typeof CATEGORIES;
+const label = CATEGORIES[cat];
+const items = (await getArticles()).filter((a) => a.data.category === cat);
+---
+<Base title={`${label} 뉴스`} description={`오늘의돈 ${label} 시황 기사 모음`}>
+  <h1 class="section-title" style="font-size:22px">{label}</h1>
+  {items.length === 0 ? <p class="muted">아직 {label} 기사가 없습니다. 곧 업데이트됩니다.</p>
+    : items.map((a) => <ArticleCard article={a} variant="list" />)}
+</Base>

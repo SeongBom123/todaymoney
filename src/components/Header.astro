@@ -1,0 +1,41 @@
+---
+import { SITE, url, formatDate } from "../lib/site";
+import { CATEGORIES } from "../content.config";
+import Ticker from "./Ticker.astro";
+const today = formatDate(new Date());
+const path = Astro.url.pathname;
+---
+<header class="site-header">
+  <div class="container top">
+    <span class="muted date">{today}</span>
+    <a href={url("about/")} class="muted">소개</a>
+  </div>
+  <div class="container brand">
+    <a href={url()} class="logo" aria-label={`${SITE.name} 홈`}>
+      <span class="logo-mark">오늘의돈</span>
+      <span class="logo-sub">{SITE.tagline}</span>
+    </a>
+  </div>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href={url()} class:list={{ active: path === url() }}>전체</a>
+      {Object.entries(CATEGORIES).map(([key, label]) => (
+        <a href={url(`category/${key}/`)} class:list={{ active: path.startsWith(url(`category/${key}/`)) }}>{label}</a>
+      ))}
+    </div>
+  </nav>
+  <Ticker />
+</header>
+<style>
+  .site-header { border-bottom: 1px solid var(--line); }
+  .top { display: flex; justify-content: space-between; font-size: 12px; padding-top: 10px; }
+  .brand { text-align: center; padding: 14px 16px 18px; }
+  .logo { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; }
+  .logo:hover { color: inherit; }
+  .logo-mark { font-family: var(--serif); font-weight: 900; font-size: clamp(34px, 7vw, 52px); letter-spacing: -0.02em; color: var(--brand); }
+  .logo-sub { font-size: 13px; color: var(--muted); }
+  .nav { border-top: 1px solid var(--text); border-bottom: 1px solid var(--line); }
+  .nav-inner { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .nav a { padding: 11px 14px; font-weight: 700; font-size: 15px; white-space: nowrap; border-bottom: 3px solid transparent; }
+  .nav a.active { border-bottom-color: var(--brand); color: var(--brand); }
+</style>

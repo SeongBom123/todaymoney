@@ -1,0 +1,46 @@
+---
+import Base from "../layouts/Base.astro";
+import ArticleCard from "../components/ArticleCard.astro";
+import { getArticles, url } from "../lib/site";
+import { CATEGORIES } from "../content.config";
+
+const articles = await getArticles();
+const [lead, ...rest] = articles;
+const side = rest.slice(0, 4);
+const byCat = Object.entries(CATEGORIES).map(([key, label]) => ({
+  key, label, items: articles.filter((a) => a.data.category === key).slice(0, 4),
+})).filter((c) => c.items.length > 0);
+---
+<Base>
+  {lead ? (
+    <section class="top-grid">
+      <div class="lead"><ArticleCard article={lead} variant="lead" /></div>
+      <aside class="side">
+        <h2 class="side-title">최신 기사</h2>
+        {side.map((a) => <ArticleCard article={a} variant="compact" />)}
+      </aside>
+    </section>
+  ) : (
+    <p class="muted" style="padding:40px 0">아직 기사가 없습니다.</p>
+  )}
+
+  <div class="cats">
+    {byCat.map((c) => (
+      <section>
+        <h2 class="section-title">{c.label} <a href={url(`category/${c.key}/`)}>더보기 →</a></h2>
+        {c.items.map((a) => <ArticleCard article={a} variant="list" />)}
+      </section>
+    ))}
+  </div>
+</Base>
+<style>
+  .top-grid { display: grid; grid-template-columns: 1fr; gap: 24px; padding-top: 28px; }
+  .lead { padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+  .side-title { font-size: 15px; font-weight: 900; border-top: 3px solid var(--text); padding-top: 10px; margin-bottom: 4px; }
+  .cats { display: grid; grid-template-columns: 1fr; column-gap: 40px; }
+  @media (min-width: 860px) {
+    .top-grid { grid-template-columns: 2fr 1fr; gap: 40px; }
+    .lead { border-bottom: 0; border-right: 1px solid var(--line); padding-right: 40px; }
+    .cats { grid-template-columns: 1fr 1fr; }
+  }
+</style>

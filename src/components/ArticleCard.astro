@@ -1,0 +1,35 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { CATEGORIES } from "../content.config";
+import { articleUrl, formatDate } from "../lib/site";
+interface Props { article: CollectionEntry<"articles">; variant?: "lead" | "list" | "compact"; }
+const { article, variant = "list" } = Astro.props;
+const d = article.data;
+const fig = d.keyFigures[0];
+---
+<article class:list={["card", variant]}>
+  <a href={articleUrl(article)}>
+    <span class="badge">{CATEGORIES[d.category]}{d.sample && " · 샘플"}</span>
+    <h3 class="title">{d.title}</h3>
+    {variant !== "compact" && <p class="summary">{d.summary}</p>}
+    {variant === "lead" && fig && (
+      <p class="fig"><span class="muted">{fig.label}</span> <b>{fig.value}</b> {fig.change && <span class={fig.direction ?? "flat"}>{fig.change}</span>}</p>
+    )}
+    <time class="muted" datetime={d.date.toISOString()}>{formatDate(d.date, true)}</time>
+  </a>
+</article>
+<style>
+  .card a { display: block; }
+  .card a:hover .title { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
+  .title { font-family: var(--serif); font-weight: 700; margin: 4px 0 6px; }
+  .summary { color: var(--muted); margin: 0 0 8px; font-size: 15px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  time { font-size: 12px; }
+  .lead .title { font-size: clamp(24px, 4.2vw, 34px); font-weight: 900; }
+  .lead .summary { font-size: 16px; -webkit-line-clamp: 4; }
+  .fig { margin: 0 0 8px; font-size: 15px; }
+  .fig b { font-size: 20px; margin: 0 4px; }
+  .list { padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .list .title { font-size: 19px; }
+  .compact { padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .compact .title { font-size: 15px; font-family: var(--sans); font-weight: 500; }
+</style>

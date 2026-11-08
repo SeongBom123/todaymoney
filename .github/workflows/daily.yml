@@ -1,0 +1,61 @@
+name: 매일 기사 생성 및 배포
+
+on:
+  schedule:
+    # 매일 16:13 KST (07:13 UTC) - 장 마감 후
+    - cron: "13 7 * * *"
+  workflow_dispatch: # Actions 탭에서 수동 실행
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: daily
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: 기사 생성
+        if: github.event_name != 'push'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ECOS_API_KEY: ${{ secrets.ECOS_API_KEY }}
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: npm run generate
+
+      - name: 새 기사 커밋
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "todaymoney-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/content/articles data
+          git diff --cached --quiet || git commit -m "기사 자동 생성: $(TZ=Asia/Seoul date +%Y-%m-%d)"
+          git push
+
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

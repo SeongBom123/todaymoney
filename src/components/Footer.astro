@@ -1,0 +1,18 @@
+---
+import { SITE, url } from "../lib/site";
+---
+<footer class="site-footer">
+  <div class="container">
+    <p class="name">{SITE.name} <span class="muted">{SITE.nameEn}</span></p>
+    <p class="muted small">
+      {SITE.name}의 시황 기사는 공개 데이터를 바탕으로 AI가 작성하고 자동 검증을 거쳐 게시됩니다.
+      모든 기사는 정보 제공 목적이며 투자 권유가 아닙니다. 투자 판단과 그 결과의 책임은 투자자 본인에게 있습니다.
+    </p>
+    <p class="muted small"><a href={url("about/")}>소개 및 운영 원칙</a> · © {new Date().getFullYear()} {SITE.name}</p>
+  </div>
+</footer>
+<style>
+  .site-footer { border-top: 1px solid var(--line); margin-top: 64px; padding: 28px 0 40px; }
+  .name { font-family: var(--serif); font-weight: 900; color: var(--brand); font-size: 20px; margin: 0 0 8px; }
+  .small { font-size: 13px; margin: 6px 0; }
+</style>
