@@ -1,18 +1,18 @@
 {
-  "updatedAt": "2026-11-17T08:24:50.469Z",
-  "asOfLabel": "2026-11-17 업데이트",
+  "updatedAt": "2026-11-18T08:23:50.512Z",
+  "asOfLabel": "2026-11-18 업데이트",
   "ticker": [
     {
       "label": "비트코인",
-      "value": "87,856,000",
-      "change": "-0.76%",
+      "value": "87,688,000",
+      "change": "-0.74%",
       "direction": "down"
     },
     {
       "label": "이더리움",
-      "value": "2,490,000",
-      "change": "+0.32%",
-      "direction": "up"
+      "value": "2,457,000",
+      "change": "-0.93%",
+      "direction": "down"
     }
   ]
 }
